@@ -7,10 +7,7 @@ dir.create("data")
 save(calhousing, file=file.path("data","calhousing.rda"))
 
 #convert string into numeric values
-calhousing$ocean_proximity <- as.character(calhousing$ocean_proximity)
-calhousing$ocean_proximity[which(calhousing$ocean_proximity=="INLAND")] <- 0
-calhousing$ocean_proximity[which(calhousing$ocean_proximity=="NEAR BAY")] <- 1
-calhousing$ocean_proximity[which(calhousing$ocean_proximity=="<1H OCEAN")] <- 0
+calhousing$ocean_proximity <- as.numeric(c("INLAND"=0,"NEAR BAY"= 1, "<1 OCEAN" = 0))
 calhousing$ocean_proximity
 
 
@@ -19,31 +16,31 @@ calhousing <- data.frame(na.omit(calhousing))
 x <- calhousing %>% select(longitude, latitude, housing_median_age,
                            total_rooms,households, median_income, 
                            median_house_value, ocean_proximity) %>% data.matrix()
-x[is.na(x)] <- mean(x, na.rm = TRUE)
 
 y <- matrix(c(calhousing$median_house_value))
 
-trainingIndex <- sample(nrow(calhousing), 0.50*nrow(calhousing)) # indices for 95% 
+trainingIndex <- sample(nrow(calhousing), 0.90*nrow(calhousing)) # indices for 95% 
 trainingData <- calhousing[trainingIndex, ] # training data
 
 x_train <- trainingData %>% select(longitude, latitude, housing_median_age,
                                    total_rooms,households, 
                                    median_income, median_house_value, ocean_proximity) %>% data.matrix()
-x_train[is.na(x_train)] <- mean(x_train, na.rm = TRUE)
+
 y_train <- matrix(c(trainingData$median_house_value))
 
 
 testData <- calhousing[-trainingIndex, ] # test data
 x_test <- testData %>% select(longitude, latitude, housing_median_age,
                               total_rooms,households, median_income, ocean_proximity) %>% data.matrix()
-x_test[is.na(x_test)] <- mean(x_test, na.rm = TRUE)
+
 y_test <- matrix(c(testData$median_house_value))
 
+#linear regression model
 #predict on testData
 H1 <- x_test%*%(1/(t(x_test)%*%x_test))%*%t(x_test) #hat matrix
 predictions_test <- H1%*%y_test
-show(predictions)
-compare <- matrix(c(trainingData$median_house_value, predictions), ncol = 2)
+show(predictions_test)
+compare <- matrix(c(trainingData$median_house_value, predictions_test), ncol = 2)
 compare
 mean (apply(compare, 1, min)/apply(compare, 1, max)) # calculate accuracy
 
@@ -58,7 +55,7 @@ corrplot(round(cor(x), 2)) #correlation graph
 symnum(cor(x))
 
 
-#notations of ridge regression to find predicted values
+#notations of linear regression model
 H <- x%*%(1/(t(x)%*%x))%*%t(x) #hat matrix
 y_predicted <- H%*%y #predictions of y
 
@@ -69,43 +66,55 @@ sse <- sum((y_predicted - y)^2)
 rsq <- 1 - sse / sst
 rsq
 
+#ridge regression
 #adapting lambdas to the submatrix
-lambdas <- matrix(seq(3, -2, by = -.1), ncol = 8, nrow = 8)
+#ridge regression on matrix x
+alphas <- matrix(seq(3, -2, by = -.1), ncol = 8, nrow = 8)
 I <- diag(8)
 
  ridge_regr <- function () {
-   t(x)%*%x+lambdas%*%I
+   ((t(x)%*%x+alphas%*%I)^(-1))%*%t(x)%*%x
  }
  
  ridge_regr()
+ pred_ridge <- x%*%(((t(x)%*%x+alphas%*%I))^(-1))%*%t(x)%*%y
+ compare <- matrix(c(calhousing$median_house_value, pred_ridge), ncol = 2)
+ compare
+ mean (apply(compare, 1, min)/apply(compare, 1, max)) # calculate accuracy
  
- 
- lambdas <- matrix(seq(3, -2, by = -.1), ncol = 7, nrow = 7)
+ #ridge regression on matrix x_test
+ alphas <- matrix(seq(3, -2, by = -.1), ncol = 7, nrow = 7)
  I1 <- diag(7)
  
  ridge_regr_test <- function () {
-   t(x_test)%*%x_test+lambdas%*%I1
+   ((t(x_test)%*%x_test+alphas%*%I1)^(-1))%*%t(x_test)%*%x_test
  }
  
  ridge_regr_test()
+ pred_test_ridge <- x_test%*%(((t(x_test)%*%x_test+alphas%*%I1))^(-1))%*%t(x_test)%*%y_test
+ compare1 <- matrix(c(trainingData$median_house_value, pred_test_ridge), ncol = 2)
+ compare1
+ mean (apply(compare1, 1, min)/apply(compare1, 1, max)) # calculate accuracy
  
- lambdas <- matrix(seq(3, -2, by = -.1), ncol = 8, nrow = 8)
+ #ridge regression on x_train
+ alphas <- matrix(seq(3, -2, by = -.1), ncol = 8, nrow = 8)
  I2 <- diag(8)
  
  ridge_regr_train <- function () {
-   t(x_train)%*%x_train+lambdas%*%I2
+   ((t(x_train)%*%x_train+alphas%*%I2)^(-1))%*%t(x_train)%*%x_train
  }
  
  ridge_regr_train()
+ pred_train_ridge <- x_train%*%(((t(x_train)%*%x_train+alphas%*%I2))^(-1))%*%t(x_train)%*%y_train
+ compare2 <- matrix(c(trainingData$median_house_value, pred_test_ridge), ncol = 2)
+ compare2
+ mean (apply(compare2, 1, min)/apply(compare2, 1, max)) # calculate accuracy
  
- 
-#find the optimal lambda
-alphas <- seq(0.1,1.0,10)
 
-
+#evaluations using notations of ridge regression
 evaluations <- function (true, predicted, df) {
-  sse <- sum((y_predicted - y)^2)
-  sst <- sum((y_predicted - mean(y))^2)
+  sse <- sum((pred_ridge - y)^2)
+  sst <- sum((pred_ridge - mean(y))^2)
   rsq <- 1 - sse / sst
   RMSE = sqrt(sse/nrow(df))
   
@@ -119,56 +128,5 @@ evaluations <- function (true, predicted, df) {
   
 }
 
-evaluations(y_train, predictions_trainingData, trainingData)
-evaluations(y_test, predictions_test, testData)
-
-list.of.fits <- list()
-for (i in 0:10) {
-  fit.name <- paste0("alpha", i/10)
-  eval <-
-    ridge_regr_train()
-}
-
-#evaluate dependences on alpha
-results <- data.frame()
-for (i in 0:10) {
-  fit.name <- paste0("alpha", i/10)
-  
-  ## Use each model to predict 'y' given the Testing dataset
-  eval <- 
-    evaluations(y_train, predictions_trainingData, trainingData)
-  
-  ## Calculate the Mean Squared Error...
-  mse <- mean((y_test - predictions_test)^2)
-  
-  ## Store the results
-  temp <- data.frame(alpha=i/10, mse=mse, fit.name=fit.name)
-  results <- rbind(results, temp)
-}
-
-view(results)
-plot(results)
-
-pca= function(x) {
-  res = prcomp(t(x)%*%x+lambdas%*%I)
-}
-show(pca(x))
-
-
-ridge <- function(lambda) {
-  x = x_train
-  y = y_train
-  lambda = lambdas
-  alpha = alphas
-}
-
-cla.pca <- prcomp(x , center = TRUE,scale. = TRUE)
-
-summary(cla.pca)
-
-pc1 <- cla.pca$rotation[,1]
-pc2 <- cla.pca$rotation[,2]
-pc3 <- cla.pca$rotation[,3]
-housepc <- rbind(pc1,pc2,pc3,calhousing$median_house_value)
-
-mean(apply(housepc, 1, min)/apply(housepc, 1, max))
+evaluations(y_train, pred_train_ridge, trainingData)
+evaluations(y_test, pred_test_ridge, testData)
