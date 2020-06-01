@@ -129,7 +129,7 @@ is linear, otherwise, in case the value is close to 0, it is a non-linear relati
 tend to increase or decrease together the coefficient is positive, and the line that represents the correlation slopes
 upward, otherwise the coefficient is negative.
 
-![images](C:/Users/Anna Errichiello/Documents/GitHub/Ridge Regr/Ridge-regression-on-Housing-Prices/images/Screenshot(64).jpg)
+![images](images/Screenshot%20(64).jpg)
 
 
 ##Linear regression and ridge regression
