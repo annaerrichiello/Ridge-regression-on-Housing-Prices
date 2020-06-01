@@ -87,7 +87,7 @@ is linear, otherwise, in case the value is close to 0, it is non-linear. Further
 tend to increase or decrease together the coefficient is positive, and the line that represents the correlation slopes
 upward, otherwise the coefficient is negative.
 
-![](images/ImageScreenshot%201.jpg)
+![](images/Image1.jpg)
 
 # Data partitioning
 After that, it is possible to start our analysis.
@@ -251,7 +251,7 @@ mse_min
 ```
 whose output is: 1.9189e+14, which is in correspondence of alpha equal to 1.0.
 The dependencies of the error on alpha are shown in the following graph:
-![](images/Image%202.jpg)
+![](images/Image2.jpg)
  
 ##Principal component analysis
 
