@@ -1,5 +1,5 @@
 temp <- data.frame()
-for (i in 0:10) {
+for (i in 0.0:1.0) {
   fit.name <- paste(alpha=c(0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0))
   
   ## Use each model to predict 'y' given the Testing dataset
@@ -24,7 +24,7 @@ for (i in 0:10) {
     mse_1.0 <- mean((y_test-pred_test_ridge_1.0)^(2))) %>% data.matrix()
   
   ## Store the results
-  temp <- data.frame(mse=mse,alpha=c(0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0))
+  temp <- data.frame(alpha=c(0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0),mse=mse)
 }
 
 view(temp)

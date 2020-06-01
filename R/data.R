@@ -40,3 +40,4 @@ round(cor(x), 2)
 #correlation plots
 corrplot(round(cor(x), 2)) #correlation graph
 symnum(cor(x))
+

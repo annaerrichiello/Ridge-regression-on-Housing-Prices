@@ -1,12 +1,10 @@
 ---
 output:
-  pdf_document:
-    fig_caption: yes
-    fig_height: 10
-    fig_width: 10
   word_document: default
+  pdf_document: default
   html_document: default
 ---
+# Ridge regression on housing prices
 ## Data-set
 This contribution develops an analysis on the cal-housing.csv documents using the program RStudio.
 The dataset contains information of houses identifying them through:
@@ -129,7 +127,7 @@ is linear, otherwise, in case the value is close to 0, it is a non-linear relati
 tend to increase or decrease together the coefficient is positive, and the line that represents the correlation slopes
 upward, otherwise the coefficient is negative.
 
-![images](C:/Users/Anna Errichiello/Documents/GitHub/Ridge Regr/Ridge-regression-on-Housing-Prices/images/Screenshot(64).jpg)
+![images](images/Screenshot%20(64).jpg)
 
 
 ##Linear regression and ridge regression
