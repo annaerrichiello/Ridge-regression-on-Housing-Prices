@@ -245,7 +245,7 @@ Finally, my output is:
 
 where the minimum is 
 
-![](images/Screenshot%20(72).jpg)
+![](images/Screenshot%20(72).png)
  
 ##Principal component analysis
 The principal component analysis is a process through which principal components are computed and these components are
