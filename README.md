@@ -1,9 +1,3 @@
----
-output:
-  word_document: default
-  pdf_document: default
-  html_document: default
----
 # Ridge regression on housing prices
 ## Data set
 This contribution develops an analysis on the cal-housing.csv documents using the program RStudio.
