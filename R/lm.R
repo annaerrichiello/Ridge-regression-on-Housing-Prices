@@ -5,3 +5,4 @@ predictions_test <- H1%*%y_test
 show(predictions_test)
 compare <- matrix(c(testData$median_house_value, predictions_test), ncol = 2)
 compare
+

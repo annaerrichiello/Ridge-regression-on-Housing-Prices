@@ -9,3 +9,4 @@ housepc <- rbind(pc1,pc2,pc3)
 median_house_value <- rbind(pc1,pc2,pc3) [,7]
 house_pc <- rbind(pc1,pc2,pc3,median_house_value)
 
+show(house_pc)

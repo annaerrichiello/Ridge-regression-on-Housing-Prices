@@ -60,3 +60,4 @@ evaluations <- function (true, predicted, df) {
 
 evaluations(y_train, pred_train_ridge, trainingData)
 evaluations(y_test, pred_test_ridge, testData)
+

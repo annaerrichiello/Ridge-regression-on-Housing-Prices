@@ -203,7 +203,7 @@ temp <- data.frame()
 for (i in 0.0:1.0) {
   fit.name <- paste(alpha=c(0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0))
   
-  ## Use each model to predict 'y' given the Testing dataset
+  ## Predict on test data
   eval <- c(pred_test_ridge_0.0 <- x_test%*%(((t(x_test)%*%x_test+matrix(c(0.0), ncol=8,nrow=8)%*%I1))^(-1))%*%t(x_test)%*%y_test,
             pred_test_ridge_0.1 <- x_test%*%(((t(x_test)%*%x_test+matrix(c(0.1), ncol=8,nrow=8)%*%I1))^(-1))%*%t(x_test)%*%y_test,
             pred_test_ridge_0.2 <- x_test%*%(((t(x_test)%*%x_test+matrix(c(0.2), ncol=8,nrow=8)%*%I1))^(-1))%*%t(x_test)%*%y_test,
@@ -347,11 +347,6 @@ evaluations <- function (true, predicted, df) {
   
 }
 ```
-Whose output is, running evaluations(y_train_housepc, pred_housepc, house_pc), is:
-
-|      RMSE|       rsq|
-|----------|----------|
-|  4.004866|1.00000000|
 
 Whereas in the test set, the function is:
 ```
@@ -371,11 +366,6 @@ evaluations <- function (true, predicted, df) {
   
 }
 ```
-and the output is :
-
-|     RMSE |      rsq|
-|----------|---------|
-| 133.4052 |0.9999996|
 
 We can say that  the RMSE is a lot better since it is lower than the initial result obtained without considering the principal components.
 
